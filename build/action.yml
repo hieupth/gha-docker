@@ -1,4 +1,4 @@
-name: docker-build-push
+name: build
 description: Build and push a Docker image (single or multi-platform) with automatic disk cleanup
 
 inputs:
@@ -53,7 +53,7 @@ runs:
   steps:
     -
       name: Prepare Docker environment
-      uses: hieupth/gh-docker-actions/docker-prepare@main
+      uses: hieupth/gha-docker/prepare@v0.1
       with:
         registry: ${{ inputs.registry }}
         username: ${{ inputs.username }}
@@ -62,7 +62,7 @@ runs:
         checkout: ${{ inputs.checkout }}
     -
       name: Build and push
-      uses: docker/build-push-action@v6
+      uses: docker/build-push-action@v7
       with:
         context: ${{ inputs.context }}
         file: ${{ inputs.dockerfile }}

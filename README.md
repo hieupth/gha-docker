@@ -1,19 +1,19 @@
-# Docker Actions
+# Github Docker Actions
 
-A collection of reusable GitHub Actions for Docker workflows.
+A small collection of reusable GitHub Actions related to Docker workflows.
 
 ## Actions
 
 | Action | Description |
 |--------|-------------|
-| [`docker-dind`](#docker-dind) | Run commands inside Docker with Docker-in-Docker |
-| [`docker-build-push`](#docker-build-push) | Build and push images (single or multi-platform) |
-| [`docker-multiarch-build`](#docker-multiarch-build) | Build single-platform, push by digest |
-| [`docker-multiarch-merge`](#docker-multiarch-merge) | Merge multi-arch manifest |
+| [`dind`](#dind) | Run commands inside Docker with Docker-in-Docker |
+| [`build`](#build) | Build and push images (single or multi-platform) |
+| [`multiarch/build`](#multiarch/build) | Build single-platform, push by digest |
+| [`multiarch/merge`](#multiarch/merge) | Merge multi-arch manifest |
 
 ---
 
-## docker-dind
+## dind
 
 Run commands inside a Docker container with Docker-in-Docker capability and TTY support.
 
@@ -42,7 +42,7 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: hieupth/gh-docker-actions/docker-dind@main
+      - uses: hieupth/gha-docker/dind@v0.1
         with:
           image: golang:1.22
           run: |
@@ -52,7 +52,7 @@ jobs:
 
 ---
 
-## docker-build-push
+## build
 
 Build and push Docker images (single or multi-platform) with automatic disk cleanup.
 
@@ -80,7 +80,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: hieupth/gh-docker-actions/docker-build-push@main
+      - uses: hieupth/gha-docker/build@v0.1
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
@@ -92,9 +92,9 @@ jobs:
 
 ---
 
-## docker-multiarch-build
+## multiarch/build
 
-Build a single-platform image, push by digest, upload digest as artifact. Use with `docker-multiarch-merge` for parallel multi-arch builds.
+Build a single-platform image, push by digest, upload digest as artifact. Use with `multiarch/merge` for parallel multi-arch builds.
 
 > **Recommended for large images**: Split build into parallel jobs to avoid timeout and disk space issues.
 
@@ -127,7 +127,7 @@ jobs:
         platform: [linux/amd64, linux/arm64]
     runs-on: ubuntu-latest
     steps:
-      - uses: hieupth/gh-docker-actions/docker-multiarch-build@main
+      - uses: hieupth/gha-docker/multiarch/build@v0.1
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
@@ -138,9 +138,9 @@ jobs:
 
 ---
 
-## docker-multiarch-merge
+## multiarch/merge
 
-Download digest artifacts and create a multi-arch manifest tag. Use after `docker-multiarch-build` jobs complete.
+Download digest artifacts and create a multi-arch manifest tag. Use after `multiarch/build` jobs complete.
 
 > **Recommended for large images**: Merges digests from parallel builds into a single multi-arch manifest.
 
@@ -162,13 +162,13 @@ Download digest artifacts and create a multi-arch manifest tag. Use after `docke
 ```yaml
 jobs:
   build:
-    # ... docker-multiarch-build jobs ...
+    # ... multiarch/build jobs ...
 
   merge:
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - uses: hieupth/gh-docker-actions/docker-multiarch-merge@main
+      - uses: hieupth/gha-docker/multiarch/merge@v0.1
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}

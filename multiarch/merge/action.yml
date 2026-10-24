@@ -1,4 +1,4 @@
-name: docker-multiarch-merge
+name: multiarch/merge
 description: Download digest artifacts and create a multi-arch manifest tag
 
 inputs:
@@ -36,7 +36,7 @@ runs:
   steps:
     -
       name: Prepare Docker environment
-      uses: hieupth/gh-docker-actions/docker-prepare@main
+      uses: hieupth/gha-docker/prepare@v0.1
       with:
         registry: ${{ inputs.registry }}
         username: ${{ inputs.username }}
@@ -46,7 +46,7 @@ runs:
         checkout: ${{ inputs.checkout }}
     -
       name: Download digest artifacts
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v8
       with:
         pattern: ${{ inputs.artifact_prefix }}-${{ inputs.tag }}-*
         path: ${{ inputs.digests_path }}

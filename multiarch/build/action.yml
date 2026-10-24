@@ -1,4 +1,4 @@
-name: docker-multiarch-build
+name: multiarch/build
 description: Build a single-platform image, push by digest, upload digest as an artifact
 
 inputs:
@@ -56,7 +56,7 @@ runs:
   steps:
     -
       name: Prepare Docker environment
-      uses: hieupth/gh-docker-actions/docker-prepare@main
+      uses: hieupth/gha-docker/prepare@v0.1
       with:
         registry: ${{ inputs.registry }}
         username: ${{ inputs.username }}
@@ -75,7 +75,7 @@ runs:
     - 
       name: Build and push (by digest)
       id: build
-      uses: docker/build-push-action@v6
+      uses: docker/build-push-action@v7
       with:
         context: ${{ inputs.context }}
         file: ${{ inputs.dockerfile }}
@@ -96,7 +96,7 @@ runs:
         echo "${{ steps.build.outputs.digest }}" > "/tmp/digests/${{ inputs.tag }}-${{ steps.plat.outputs.plat_tag }}.digest"
     - 
       name: Upload digest artifact (unique per platform)
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         # Artifact names must be unique in v4
         name: ${{ inputs.artifact_prefix }}-${{ inputs.tag }}-${{ steps.plat.outputs.plat_tag }}
